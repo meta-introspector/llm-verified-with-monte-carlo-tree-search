@@ -1,6 +1,6 @@
 from cmdline import args
 
-REFLECT = args.reflect
+REFLECT = True #args.reflect
 
 from montecarlo.node import Node
 from montecarlo.montecarlo import MonteCarlo
@@ -17,9 +17,9 @@ from common_stats import stats
 
 import llm
 
-if REFLECT:
-    import reflection
-    from lang import short_verifier_feedback
+#if REFLECT:
+import reflection
+from lang import short_verifier_feedback
 
 def place_reflection(r, text):
     if r in text:

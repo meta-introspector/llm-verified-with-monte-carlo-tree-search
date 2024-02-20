@@ -1,11 +1,16 @@
 from cmdline import args
+import os
+os.environ["OPENAI_API_BASE"] = "https://dev-hub.agentartificial.com/v1"
+os.environ["OPENAI_API_KEY"] = "areyoukidding"
+# OPENAI_API_BASE=http://mockopenai:5000/v1
+#     --openai -m "mixtral" -u 
 
-MODEL_HOST = args.model_host
+#MODEL_HOST = args.model_host
 # MODEL_HOST = "huggingface"
-# MODEL_HOST = "openai"
+MODEL_HOST = "openai"
 
 # Pick an OpenAI model:
-OPENAI_MODEL = "gpt-4"
+OPENAI_MODEL = "mixtral"
 
 # Pick a base model hosted on HuggingFace:
 BASE_MODEL_NAME = args.base_model_name

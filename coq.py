@@ -13,7 +13,8 @@ def give_context(v: str) -> (str, str):
 def short_verifier_feedback(ok: str, not_ok: str) -> Optional[Tuple[str,str]]:
     try:
         not_ok_first = not_ok[0 : not_ok.index(".", len(ok))]
-    except ValueError:
+    except ValueError as e:
+        print("ERROR2:",e)
         return None
     r = checkDetails(not_ok_first)
     #details = r["details"]
@@ -24,7 +25,8 @@ def short_verifier_feedback(ok: str, not_ok: str) -> Optional[Tuple[str,str]]:
     log = r["log"]
     try:
         err = log[log.index(":")+1 :].strip()
-    except ValueError:
+    except ValueError as e:
+        print("ERROR3:",e)
         return None
     left = leftAfterError(v, log)
     rest = not_ok[len(ok.strip()) : len(not_ok)-len(left)].strip()
@@ -35,13 +37,13 @@ def short_verifier_feedback(ok: str, not_ok: str) -> Optional[Tuple[str,str]]:
 def verifier_feedback(ok: str, not_ok: str) -> Optional[str]:
     try:
         not_ok_first = not_ok[0 : not_ok.index(".", len(ok))]
-    except ValueError:
+    except ValueError as e:
+        print("ERROR3:",e)
         return None
     r = checkDetails(not_ok_first)
     details = r["details"]
     if details and details not in ok:
-        print("DETAILS")
-        print(details)
+        print("DETAILS:",details)
         text = ok
         text += "\n(* " + details + " *)\n"
         v = filterCoq(not_ok + "```")
@@ -92,9 +94,10 @@ def calculateScoreHelper(msg: str) -> (Optional[float], Optional[str]):
     if r["status"] == 0:
         return 1.0, v
     log = r["log"]
-    print(log)
+    print("LOG:",log)
     left = leftAfterError(v, log)
     v0 = v[:len(v)-len(left)]
+    print("MSG:",msg)
     if filterCoq(msg) == v:
         return -1.0, v0
     if "There are pending proofs" in log:
@@ -110,19 +113,15 @@ def calculateScoreHelper(msg: str) -> (Optional[float], Optional[str]):
         return -1.0, v0
 
 def score_func(sentence: str) -> Optional[float]:
-    print("TEXT")
-    print(sentence)
+    print("TEXT:",sentence)
     score = calculateScore(sentence)
-    print("SCORE")
-    print(score)
+    print("SCORE:",score)
     return score
 
 def score_func_code(sentence: str) -> (Optional[float], Optional[str]):
-    print("TEXT")
-    print(sentence)
+    print("TEXT2:",sentence)
     score, v = calculateScoreHelper(sentence)
-    print("SCORE")
-    print(score)
+    print("SCORE2",score)
     return score, v
 
 def filterCoq(msg: str) -> str:
@@ -132,18 +131,22 @@ def filterCoq(msg: str) -> str:
 
 
 def checkCoq(v: str, giveDetails: bool = False) -> dict:
+    #print("DEBUGCOQ:",v)
     if livecode:
         r = requests.post(
             f"https://coq{'c' if giveDetails else ''}.livecode.ch/check", data={"v": v}
         )
         r.raise_for_status()
         return r.json()
-
+    print("DEBUGCOQIN:",v)
     r = execute("coqc", "v", v)
     status = r["status"]
     log = r["log"]
     outlog = r["out"]
 
+    print("DEBUGCOQOUT:",outlog)
+    print("DEBUGCOQOUT:",log)
+        
     details = ""
     context = ""
     if giveDetails and log != "":

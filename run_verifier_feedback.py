@@ -52,9 +52,12 @@ def child_finder(node, montecarlo):
         return
 
     (text, score) = generate_complete(node.state, montecarlo)
+
     if score < 0:
-        if REFLECT:
-            (snippet, err) = short_verifier_feedback(node.state, text)
+        out = short_verifier_feedback(node.state, text)
+        print(out)
+        if out:
+            (snippet, err) = out
             if err:
                 code = filter_code(text+"```")
                 r = reflection.reflect(code, snippet, err)

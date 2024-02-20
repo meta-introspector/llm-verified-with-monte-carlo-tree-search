@@ -5,7 +5,9 @@ if MODEL_HOST == "openai":
     import openai_generate
 
     def generate(prompt: str, num: int) -> List[str]:
-        return openai_generate.generate(prompt, num)
+        res = openai_generate.generate(prompt, num)
+        print("PROMPT:",prompt,"RESPONSE:",res)
+        return res 
 
     def generate_full(prompt: str) -> str:
         return generate(prompt, 1)[0]
